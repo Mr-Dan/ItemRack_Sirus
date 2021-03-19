@@ -2,13 +2,14 @@
 	<Frame name="ItemRackFrame" hidden="true">
 		<Scripts>
 			<OnLoad>
-				ItemRack.OnLoad()
+				ItemRack.OnLoad()			
 			</OnLoad>
 			<OnEvent>
 				ItemRack.OnEvent()
 			</OnEvent>
 			<OnUpdate>
 				ItemRack.OnUpdate(self,elapsed)
+				ItemRack.UpdateClassSpecificStuff()
 			</OnUpdate>
 		</Scripts>
 	</Frame>

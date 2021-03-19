@@ -899,6 +899,7 @@ function ItemRack.BuildMenu(id,menuInclude)
 				button:Show()
 			end
 			icon = getglobal("ItemRackMenu"..i.."Icon")
+			
 			if icon then
 				icon:SetDesaturated(0)
 				if IsAltKeyDown() and ItemRackSettings.AllowHidden=="ON" and IsAltKeyDown() and ItemRack.IsHidden(ItemRack.Menu[i]) then
