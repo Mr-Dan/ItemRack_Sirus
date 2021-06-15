@@ -1846,3 +1846,44 @@ function ItemRack.ProfileFuncs()
 		table.insert(TinyPadPages,info)
 	end
 end
+
+local function ItemRack_addLine(self,id)
+		self:AddLine("|cff6E86D6ItemRack Комплекты экипировки:".."|cffffffff"..id)	
+		self:Show()
+end
+
+GameTooltip:HookScript("OnTooltipSetItem", function(self)end)
+
+local function ItemRack_attachItemTooltip(self)	
+	local set =""
+	local find_item =0
+	local link = select(2,self:GetItem())
+	if not link then return end
+	local id = select(3,strfind(link, "^|%x+|Hitem:(%-?%d+):(%d+):(%d+):(%d+):(%d+):(%d+):(%-?%d+):(%-?%d+)"))
+	local count =0
+	for key,value in pairs(ItemRackUser.Sets) do 
+	
+		if key ~= "~Unequip" and key ~= "~CombatQueue" then
+			for _,s in pairs(ItemRackUser.Sets[key].equip) do
+			i, j = string.find(s, ":")
+				if i then
+					find_item =string.sub(s, 1, j-1)		
+					if find_item == id then
+					
+					if count == 0 then
+						set= set.." "..key
+					else
+						set= set..", "..key
+					end
+						count=count+1
+					end		
+				end
+			end	
+			find_item =0;
+		end	
+	end
+	if id and set~=""  then ItemRack_addLine(self,set) end
+end
+
+
+GameTooltip:HookScript("OnTooltipSetItem", ItemRack_attachItemTooltip)
