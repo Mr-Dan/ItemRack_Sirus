@@ -1,0 +1,30 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+	<Script file="ItemRack_Titan.lua" />
+	
+	<GameTooltip name="Titan_IRTooltip" frameStrata="TOOLTIP" hidden="true" parent="UIParent" inherits="GameTooltipTemplate" />
+    
+	<Frame parent="UIParent">
+		<Frames>
+			<Button name="TitanPanelItemRackButton" inherits="TitanPanelComboTemplate" frameStrata="FULLSCREEN" toplevel="true">
+				<Scripts>
+				
+					<OnUpdate>
+						ItemRackt_Titan_Update();
+					</OnUpdate>
+					<OnLoad>
+						TitanPanelItemRackButton_OnLoad(self);
+						TitanPanelButton_OnLoad(self);
+					</OnLoad>
+					<OnClick>
+						TitalPanelItemRackButton_OnClick(self, arg1);
+						TitanPanelButton_OnClick(self, arg1);
+					</OnClick>
+					<OnEnter>
+				ItemRack.MinimapOnEnter()
+			</OnEnter>
+                </Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+</Ui>
