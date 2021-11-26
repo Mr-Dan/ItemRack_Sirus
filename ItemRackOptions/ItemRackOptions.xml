@@ -1585,7 +1585,7 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Frame>
+					<Frame name= "ItemRackOptSubFrame5_lists" >
 						<Size>
 							<AbsDimension x="178" y="256"/>
 						</Size>
