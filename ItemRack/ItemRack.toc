@@ -1,7 +1,7 @@
 ## Interface: 30300
 ## Title: ItemRack
 ## Author: Днюша
-## Version: 1.02
+## Version: 1.01
 ## SavedVariables: ItemRackSettings, ItemRackItems
 ## SavedVariablesPerCharacter: ItemRackUser
 ItemRack.lua
