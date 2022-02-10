@@ -17,6 +17,7 @@ ItemRackUser = {
 	MenuScale = .85, -- scale of the menu in relation to docked buttons
 	SetMenuWrap = "OFF", -- whether user defines when to wrap the menu
 	SetMenuWrapValue = 3, -- when to wrap the menu if user defined
+	BD = {}, -- Black diamonds
 }
 
 ItemRackSettings = {
@@ -123,7 +124,7 @@ ItemRack.TooltipInfo = {
 	{"ItemRackOptSetsBindButton","Привязать клавишу к комплекту","Это позволит вам привязать клавишу или комбинацию клавиш для оснащения набора."},
 	{"ItemRackOptEventNew","Новое событие","Создать новое событие."},
 	{"ItemRackOptEventDelete","Удалить событие","Если это событие включено или имеет связанный с ним набор, то он удалит теги и бросит его в список.  Если это событие является немаркированным, оно удалит его полностью."},
-	
+	{"ItemRackOptSetsBDCheckButton","Черные бриллианты","Переставлять черные бриллианты в этот комплект при его надевании"},
 	
 	{"ItemRackOptEventEditBuffAnyMount","Любое крепление","При этом проверяется, активен ли какой-либо крепеж вместо определенного буфера."},
 	{"ItemRackOptEventEditExpand","Редактирование в редакторе","Это отсоединит окно редактирования скрипта выше к текстовому редактору с возможностью изменения размера."},
@@ -1687,6 +1688,42 @@ function ItemRack.RunSetBinding(setname)
 		ItemRack.EquipSet(setname)
 		ItemRack.EquipSet(setname)
 
+	end
+end
+
+function ItemRack.AddBD(id)
+	if not ItemRackUser.BD then -- to support the first download with the settings of the version without black diamonds
+		ItemRackUser.BD = {}
+	end
+	if id then			
+		for i=1,#(ItemRackUser.BD) do
+			if ItemRackUser.BD[i]==id then
+				return
+			end
+		end		
+		table.insert(ItemRackUser.BD,id)
+	end
+end
+
+function ItemRack.RemoveBD(id)
+	if ItemRackUser.BD then
+		for i=1,#(ItemRackUser.BD) do
+			if ItemRackUser.BD[i]==id then
+				table.remove(ItemRackUser.BD,i)
+				break
+			end
+		end
+	end
+end
+
+function ItemRack.IsBD(id)
+	if ItemRackUser.BD then
+		for i=1,#(ItemRackUser.BD) do
+			if ItemRackUser.BD[i]==id then
+				return 1
+			end
+		end
+		return nil
 	end
 end
 
