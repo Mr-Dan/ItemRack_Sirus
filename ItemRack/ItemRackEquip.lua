@@ -77,6 +77,9 @@ function ItemRack.EquipSet(setname)
 			set.old[i] = nil -- wipe old items
 		end
 		set.oldset = ItemRackUser.CurrentSet
+		if ItemRack.IsBD(setname) then
+			ReInsertBlackDiamonds()
+		end
 	end
 
 	-- if in combat or dead, combat queue items wanting to equip and only let swappables through
@@ -313,4 +316,183 @@ function ItemRack.ToggleSet(setname,exact)
 		ItemRack.EquipSet(setname)
 		ItemRack.EquipSet(setname)
 	end
+end
+function ReInsertBlackDiamonds()
+	C_Timer:After(0.5, ExtractBlackDiamonds)
+	C_Timer:After(1, InsertBlackDiamonds)
+end
+
+local inventorySlots = {
+	"HeadSlot",
+	"NeckSlot",
+	"ShoulderSlot",
+	"BackSlot",
+	"ChestSlot",
+	"WristSlot",
+	"HandsSlot",
+	"WaistSlot",
+	"LegsSlot",
+	"FeetSlot",
+	"Finger0Slot",
+	"Finger1Slot",
+--    "Trinket0Slot",
+--    "Trinket1Slot",
+	"MainHandSlot",
+	"SecondaryHandSlot",
+	"RangedSlot"
+}
+
+function ExtractBlackDiamonds()
+  for b = 0, 4 do
+	  for s = 1, GetContainerNumSlots(b) do
+		  local l = GetContainerItemLink(b, s)
+		  if l then
+			  for i = 1, 3 do
+				  local _, g = GetItemGem(l, i)
+				  if g then
+					  local _, _, r = GetItemInfo(g)
+					  if r == 5 then
+						  SendServerMessage("ACMSG_REMOVE_SOCKET_FROM_ITEM", string.format("%d:%d:%d", b, s, i))
+					  end
+				  end
+			  end
+		  end
+	  end
+  end
+end
+
+local items = {
+	[260048] = true,
+	[260046] = true,
+	[260044] = true,
+	[260042] = true,
+	[260040] = true,
+	[260047] = true,
+	[260045] = true,
+	[260043] = true,
+	[260041] = true,
+	[260039] = true,
+	[260038] = true,
+	[260036] = true,
+	[260034] = true,
+	[260032] = true,
+	[260030] = true,
+	[260037] = true,
+	[260035] = true,
+	[260033] = true,
+	[260031] = true,
+}
+
+local metaItems = {
+	[260050] = true,
+	[260052] = true,
+	[260054] = true,
+	[260056] = true,
+	[260058] = true,
+	[260051] = true,
+	[260053] = true,
+	[260055] = true,
+	[260057] = true,
+	[260059] = true,
+	[260060] = true,
+	[260062] = true,
+	[260064] = true,
+	[260066] = true,
+	[260068] = true,
+	[260061] = true,
+	[260063] = true,
+	[260065] = true,
+	[260067] = true,
+	[260069] = true,
+	[260070] = true,
+}
+
+local ignoreList = {}
+local lastSlotID = 1
+
+local CheckSocketingSlots, CheckInventorySlot
+
+local f = CreateFrame("Frame")
+f:SetScript("OnEvent", function(self, event)
+	if event == "SOCKET_INFO_UPDATE" then
+	--    CheckSocketingSlots()
+		C_Timer:After(0.05, CheckSocketingSlots)
+	elseif event == "SOCKET_INFO_CLOSE" then
+	--    CheckInventorySlot()
+		lastSlotID = lastSlotID + 1
+		C_Timer:After(0.05, CheckInventorySlot)
+	end
+end)
+
+local function CheckBagsSlots(soketID, isMeta)
+	for bagID = 0, 4 do
+		 if not ignoreList[bagID] then
+			  ignoreList[bagID] = {}
+		 end
+		 for slotID = 1, GetContainerNumSlots(bagID) do
+			  itemID = GetContainerItemID(bagID, slotID)
+			  if itemID and (isMeta and metaItems[itemID] or items[itemID]) and not ignoreList[bagID][slotID] then
+					ignoreList[bagID][slotID] = true
+					PickupContainerItem(bagID, slotID)
+					ClickSocketButton(soketID)
+					return true
+			  end
+		 end
+	end
+end
+
+function CheckSocketingSlots()
+	local totalSokets = 0
+	local numSockets = GetNumSockets()
+	local hasAcceptSockets
+	for soketID = 1, numSockets do
+		 local name = GetNewSocketInfo(soketID)
+		 if not name then
+			  name = GetExistingSocketInfo(soketID)
+			  if not name then
+					local checkBags = CheckBagsSlots(soketID, GetSocketTypes(soketID) == "Meta")
+					if not checkBags then
+						totalSokets = totalSokets + 1
+					end
+			  else
+					totalSokets = totalSokets + 1
+			  end
+		 else
+			  hasAcceptSockets = true
+			  totalSokets = totalSokets + 1
+		 end
+	end
+	if totalSokets == numSockets then
+		if hasAcceptSockets then
+			AcceptSockets()
+		end
+		HideUIPanel(ItemSocketingFrame)
+	end
+end
+
+function CheckInventorySlot()
+	for slotID = (lastSlotID or 1), 19 do
+		lastSlotID = slotID
+		itemID = GetInventoryItemLink("player", slotID)
+		if itemID then
+		SocketInventoryItem(slotID)
+			if GetNumSockets() > 0 then
+				break
+			end
+		end
+	end
+	if lastSlotID == 19 then
+		f:UnregisterEvent("SOCKET_INFO_UPDATE")
+		f:UnregisterEvent("SOCKET_INFO_CLOSE")
+		table.wipe(ignoreList)
+		lastSlotID = 1
+	end
+end
+
+function InsertBlackDiamonds()
+	table.wipe(ignoreList)
+	lastSlotID = 1
+	f:RegisterEvent("SOCKET_INFO_UPDATE")
+	f:RegisterEvent("SOCKET_INFO_CLOSE")
+	CheckInventorySlot()
 end

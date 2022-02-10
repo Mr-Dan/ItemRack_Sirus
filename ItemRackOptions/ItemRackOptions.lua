@@ -19,6 +19,7 @@ ItemRack.CheckButtonLabels = {
 	["ItemRackOptEventEditStanceUnequipText"] = "Снять когда покидаешь стойку",
 	["ItemRackOptEventEditZoneUnequipText"] = "Снять когда уходите из зоны",
 	["ItemRackOptEventEditStanceNotInPVPText"] = "За исключением случаев PVP",
+	["ItemRackOptSetsBDCheckButtonText"] = "ЧБ",
 }
 
 function ItemRackOpt.InvOnEnter()
@@ -360,6 +361,9 @@ function ItemRackOpt.ValidateSetButtons()
 	ItemRackOptSetsHideCheckButton:Disable()
 	ItemRackOptSetsHideCheckButtonText:SetTextColor(.5,.5,.5,1)
 	ItemRackOptSetsHideCheckButton:SetChecked(0)
+	ItemRackOptSetsBDCheckButton:Disable()
+	ItemRackOptSetsBDCheckButtonText:SetTextColor(.5,.5,.5,1)
+	ItemRackOptSetsBDCheckButton:SetChecked(0)
 	
 	
 	
@@ -380,6 +384,9 @@ function ItemRackOpt.ValidateSetButtons()
 		ItemRackOptSetsHideCheckButtonText:SetTextColor(1,1,1,1)
 		ItemRackOptSetsHideCheckButton:SetChecked(ItemRack.IsHidden(setname))
 		ItemRackOptSetsCurrentSetIcon:SetTexture(ItemRackUser.Sets[setname].icon)
+		ItemRackOptSetsBDCheckButton:Enable()
+		ItemRackOptSetsBDCheckButtonText:SetTextColor(1,1,1,1)
+		ItemRackOptSetsBDCheckButton:SetChecked(ItemRack.IsBD(setname))
 		
 		
 		
@@ -409,6 +416,17 @@ function ItemRackOpt.DeleteSet()
 	ItemRackOpt.PopulateSetList()
 	
 	
+end
+
+function ItemRackOpt.BDSet()
+	local setname = ItemRackOptSetsName:GetText()
+	if setname and ItemRackUser.Sets[setname] then
+		if ItemRackOptSetsBDCheckButton:GetChecked() then
+			ItemRack.AddBD(setname)
+		else
+			ItemRack.RemoveBD(setname)
+		end
+	end
 end
 
 function ItemRackOpt.HideSet()

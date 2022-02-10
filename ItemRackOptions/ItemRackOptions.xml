@@ -783,7 +783,7 @@
 
 	<Button name="ItemRackOptButtonTemplate" inherits="UIPanelButtonGrayTemplate" virtual="true">
 		<Size>
-			<AbsDimension x="55" y="28"/>
+			<AbsDimension x="60" y="20"/>
 		</Size>
 		<NormalFont style="GameFontHighlightSmall"/>
 		<DisabledFont style="GameFontDisableSmall"/>
@@ -1556,6 +1556,29 @@
 							<OnClick>
 								PlaySound("igMainMenuOptionCheckBoxOn")
 								ItemRackOpt.HideSet()
+							</OnClick>
+							<OnEnter>
+								ItemRack.OnTooltip()
+							</OnEnter>
+							<OnLeave>
+								GameTooltip:Hide()
+							</OnLeave>
+						</Scripts>
+					</CheckButton>
+					
+					<CheckButton name="ItemRackOptSetsBDCheckButton" inherits="ItemRackOptSimpleCheckButton">
+						<Size>
+							<AbsDimension x="20" y="20"/>
+						</Size>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="ItemRackOptSetsCurrentSet" relativePoint="BOTTOMLEFT">
+								<Offset x="100" y="-5"/>
+							</Anchor>
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								PlaySound("igMainMenuOptionCheckBoxOn")
+								ItemRackOpt.BDSet()
 							</OnClick>
 							<OnEnter>
 								ItemRack.OnTooltip()
